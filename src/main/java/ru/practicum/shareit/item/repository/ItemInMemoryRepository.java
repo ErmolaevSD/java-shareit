@@ -1,15 +1,14 @@
 package ru.practicum.shareit.item.repository;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -26,6 +25,18 @@ public class ItemInMemoryRepository {
         itemMap.put(item.getId(), item);
         log.info("Успешно создана вещь {}", item);
         return item;
+    }
+
+    public List<Item> searchItem(String search) {
+        return itemMap.values().stream()
+                .filter(item -> (item.getName().equalsIgnoreCase(search) || item.getDescription().equalsIgnoreCase(search)) && item.getAvailable() == true)
+                .toList();
+    }
+
+    public List<Item> getItemBiUser(Integer id) {
+        return itemMap.values().stream()
+                .filter(item -> item.getOwnerId().equals(id))
+                .toList();
     }
 
     public Item updateItem(Integer ownerId,
@@ -60,14 +71,9 @@ public class ItemInMemoryRepository {
         itemMap.remove(id);
     }
 
-
-
-
-
-
-
-
-
+    public Collection<Item> getAll() {
+        return itemMap.values();
+    }
 
     private Integer getNextId() {
         int currentMaxId = itemMap.keySet()
