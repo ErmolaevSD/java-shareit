@@ -1,26 +1,17 @@
 package ru.practicum.shareit.item.mapper;
 
+import org.mapstruct.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-public class ItemMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface ItemMapper {
 
-    public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .requestId(item.getRequestId() != null ? item.getRequestId() : null)
-                .build();
-    }
+    ItemDto toItemDto(Item item);
 
-    public static Item toDtoItem(ItemDto itemDto) {
-        return Item.builder()
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .requestId(itemDto.getRequestId() != null ? itemDto.getRequestId() : null)
-                .build();
-    }
+    Item toDtoItem(ItemDto itemDto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    Item updateUserFromDto(ItemDto itemDto, @MappingTarget Item item);
 }

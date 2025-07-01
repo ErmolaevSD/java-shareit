@@ -20,12 +20,13 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemInMemoryRepository itemInMemoryRepository;
     private final UserService userService;
+    private final ItemMapper itemMapper;
 
     @Override
     public ItemDto createItem(Integer ownerId,
                               ItemDto itemDto) {
         userService.getUser(ownerId);
-        return ItemMapper.toItemDto(itemInMemoryRepository.createItem(ownerId, itemDto));
+        return itemMapper.toItemDto(itemInMemoryRepository.createItem(ownerId, itemDto));
     }
 
     @Override
@@ -33,23 +34,23 @@ public class ItemServiceImpl implements ItemService {
         if (isNull(itemInMemoryRepository.getItem(id))) {
             throw new NotFoundException("Вещи с id " + id + " не найдено");
         }
-        return ItemMapper.toItemDto(itemInMemoryRepository.getItem(id));
+        return itemMapper.toItemDto(itemInMemoryRepository.getItem(id));
     }
 
     @Override
     public List<ItemDto> getItemByUser(Integer id) {
-        return itemInMemoryRepository.getItemBiUser(id).stream().map(ItemMapper::toItemDto).toList();
+        return itemInMemoryRepository.getItemByUser(id).stream().map(itemMapper::toItemDto).toList();
     }
 
     @Override
     public ItemDto updateItem(Integer ownerId,
                               Integer itemId,
-                              Map<String, Object> objects) {
+                              ItemDto itemDto) {
         userService.getUser(ownerId);
         if (!itemInMemoryRepository.getItem(itemId).getOwnerId().equals(ownerId)) {
             throw new NotFoundException("Обновить вещь может только владелец");
         }
-        return ItemMapper.toItemDto(itemInMemoryRepository.updateItem(ownerId, itemId, objects));
+        return itemMapper.toItemDto(itemInMemoryRepository.updateItem(itemId, itemDto));
     }
 
     @Override
@@ -57,6 +58,6 @@ public class ItemServiceImpl implements ItemService {
         if (search.isBlank()) {
             return new ArrayList<>();
         }
-        return itemInMemoryRepository.searchItem(search).stream().map(ItemMapper::toItemDto).toList();
+        return itemInMemoryRepository.searchItem(search).stream().map(itemMapper::toItemDto).toList();
     }
 }

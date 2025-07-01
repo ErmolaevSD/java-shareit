@@ -14,7 +14,7 @@ public interface ItemService {
 
     List<ItemDto> getItemByUser(Integer id);
 
-    ItemDto updateItem(Integer ownerId, Integer itemId, Map<String, Object> object);
+    ItemDto updateItem(Integer ownerId, Integer itemId, ItemDto itemDto);
 
     List<ItemDto> searchItem(String search);
 }

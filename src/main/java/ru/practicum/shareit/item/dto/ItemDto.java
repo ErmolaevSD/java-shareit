@@ -14,9 +14,7 @@ public class ItemDto {
 
     private Integer id;
     @NotBlank
-    @NotNull
     private String name;
-    @NotNull
     @NotBlank
     private String description;
     @NotNull
