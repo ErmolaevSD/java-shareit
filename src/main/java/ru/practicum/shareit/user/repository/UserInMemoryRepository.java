@@ -12,6 +12,7 @@ import java.util.Map;
 @Repository
 @Slf4j
 @Data
+@Deprecated
 public class UserInMemoryRepository {
 
     private final Map<Integer, User> userMap = new HashMap<>();
