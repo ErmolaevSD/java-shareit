@@ -27,13 +27,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull(message = "Имя пользователя не может быть null")
     @NotBlank(message = "Имя пользователя не может быть пустым")
     @Column(name = "name")
     private String name;
 
     @Email(message = "Указан некорректный формат электронной почты")
-    @NotNull(message = "Электронная почта не может быть null")
+    @NotBlank(message = "Электронная почта не может быть null")
     @Column(name = "email")
     private String email;
 }
