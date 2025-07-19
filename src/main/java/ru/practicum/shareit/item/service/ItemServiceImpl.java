@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.NotValidException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -76,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
         userService.getUser(ownerId);
         Item item = itemMapper.toDtoItem(this.getItem(itemId));
         if (!item.getOwner().getId().equals(ownerId)) {
-            throw new NotFoundException("Обновить вещь может только владелец");
+            throw new NotValidException("Обновить вещь может только владелец");
         } else {
             Item item1 = itemMapper.updateItemFromDto(itemDto, item);
             return itemMapper.toItemDto(item1);
@@ -104,7 +105,7 @@ public class ItemServiceImpl implements ItemService {
         boolean getBooking = allBookingByUser.stream().anyMatch(booking -> booking.getBooker().getId().equals(ownerId));
 
         if (!getBooking) {
-            throw new RuntimeException("Пользователь вещь не брал");
+            throw new NotValidException("Пользователь вещь не брал");
         }
 
         User user = userService.getUser(ownerId);

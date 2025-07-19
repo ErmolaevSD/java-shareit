@@ -1,10 +1,8 @@
 package ru.practicum.shareit.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,11 +15,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Table(name = "users")
 public class User {
 
-    @Positive(message = "Id пользователя не может быть отрицательным")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

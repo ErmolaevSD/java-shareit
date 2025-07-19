@@ -28,7 +28,6 @@ public class UserService {
         if (findUserSameEmail(user.getEmail())) {
             throw new CreateModelException("Пользователь с указанным email уже существует");
         }
-
         return userRepository.save(user);
     }
 

@@ -8,8 +8,6 @@ import ru.practicum.shareit.booking.model.Booking;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BookingMapper {
 
-    @Mapping(target = "item", source = "item")
-    @Mapping(target = "booker", source = "booker")
     BookingResponseDto toBookingResponseDto(Booking booking);
 
     Booking toDtoBooking(BookingCreatedDto bookingCreatedDto);

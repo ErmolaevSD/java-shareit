@@ -13,13 +13,10 @@ import static java.util.Objects.isNull;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ItemMapper {
 
-    @Mapping(target = "comments", ignore = true)
     Item toCreatedDtoItem(ItemCreatedDto itemCreatedDto);
 
-    @Mapping(target = "comments", source = "comments")
     ItemDto toItemDto(Item item);
 
-    @Mapping(target = "comments", ignore = true)
     Item toDtoItem(ItemDto itemDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Table(name = "bookings")
 public class Booking {
 
@@ -31,11 +29,11 @@ public class Booking {
     private LocalDateTime end;
 
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "booker_id")
+    @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
 
     @Enumerated(EnumType.STRING)

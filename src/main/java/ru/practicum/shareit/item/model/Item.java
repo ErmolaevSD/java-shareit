@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Table(name = "items")
 public class Item {
 

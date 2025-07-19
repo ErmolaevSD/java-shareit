@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.NotValidException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
@@ -61,7 +62,7 @@ public  class BookingServiceDb implements BookingService {
 
         if (booking.get().getBooker().getId().equals(ownerId) || booking.get().getItem().getOwner().getId().equals(ownerId)) {
             return bookingMapper.toBookingResponseDto(booking.get());
-        } else throw new RuntimeException("");
+        } else throw new NotValidException("Бронирование может видеть только владелец или тот кто бронировал");
     }
 
     @Override
@@ -74,7 +75,7 @@ public  class BookingServiceDb implements BookingService {
         if (booking.get().getBooker().getId().equals(ownerId) || booking.get().getItem().getOwner().getId().equals(ownerId)) {
             booking.get().setStatus(BookingStatus.findEnumByDescription(approved));
             return bookingMapper.toBookingResponseDto(bookingRepository.save(booking.get()));
-        } else throw new RuntimeException("");
+        } else throw new NotValidException("Подтвердить бронирование может только владелец");
     }
 
     @Override
