@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
@@ -52,15 +51,16 @@ public class ItemServiceImpl implements ItemService {
         List<CommentDto> allByCommentItemId = commentRepository.findAllByItemId(id);
         ItemDto itemDto = itemMapper.toItemDto(byId.get());
         itemDto.setComments(allByCommentItemId);
-
         List<Booking> bookingList = bookingRepository.findByItemId(id);
-
         Booking last = bookingList.stream()
                 .filter(booking -> booking.getEnd().toLocalDate().isBefore(LocalDate.now()))
                 .max(Comparator.comparing(Booking::getStart)).orElse(null);
 
+        Booking next = bookingList.stream()
+                .filter(booking -> booking.getEnd().toLocalDate().isAfter(LocalDate.now()))
+                .max(Comparator.comparing(Booking::getStart)).orElse(null);
         itemDto.setLastBooking(last);
-
+        itemDto.setNextBooking(next);
         return itemDto;
     }
 

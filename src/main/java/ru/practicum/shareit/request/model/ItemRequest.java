@@ -27,5 +27,5 @@ public class ItemRequest {
     private String description;
 
     @Column(name = "requestor_id")
-    private Integer requestor_id;
+    private Integer requestorId;
 }

@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.shareit.exception.NotFoundException;
 
 @Getter
 @AllArgsConstructor
@@ -18,6 +17,7 @@ public enum BookingStatus {
             if (bookingStatus.getDescription().equals(description)) {
                 return bookingStatus;
             }
-        } return null;
+        }
+        return null;
     }
 }

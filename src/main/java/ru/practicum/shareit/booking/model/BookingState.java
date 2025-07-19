@@ -20,6 +20,7 @@ public enum BookingState {
             if (booking.getDescription().equals(description)) {
                 return booking;
             }
-        } return null;
+        }
+        return null;
     }
 }
