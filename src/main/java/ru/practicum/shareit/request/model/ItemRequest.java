@@ -1,25 +1,23 @@
 package ru.practicum.shareit.request.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Positive;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * TODO Sprint add-item-requests.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Table(name = "request")
 public class ItemRequest {
 
-    @Positive
     @Id
     private Integer id;
 

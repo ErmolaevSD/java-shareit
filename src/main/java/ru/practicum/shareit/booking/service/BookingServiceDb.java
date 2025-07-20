@@ -62,7 +62,9 @@ public  class BookingServiceDb implements BookingService {
 
         if (booking.get().getBooker().getId().equals(ownerId) || booking.get().getItem().getOwner().getId().equals(ownerId)) {
             return bookingMapper.toBookingResponseDto(booking.get());
-        } else throw new NotValidException("Бронирование может видеть только владелец или тот кто бронировал");
+        } else {
+            throw new NotValidException("Бронирование может видеть только владелец или тот кто бронировал");
+        }
     }
 
     @Override
