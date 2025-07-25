@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreatedDto;
@@ -11,9 +10,6 @@ import ru.practicum.shareit.booking.service.BookingService;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
@@ -23,7 +19,7 @@ public class BookingController {
 
     @PostMapping
     public BookingResponseDto create(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
-                                     @RequestBody @Valid BookingCreatedDto bookingCreatedDto) {
+                                     @RequestBody BookingCreatedDto bookingCreatedDto) {
         return bookingService.createBooking(ownerId, bookingCreatedDto);
     }
 
