@@ -77,7 +77,9 @@ public  class BookingServiceDb implements BookingService {
         if (booking.get().getBooker().getId().equals(ownerId) || booking.get().getItem().getOwner().getId().equals(ownerId)) {
             booking.get().setStatus(BookingStatus.findEnumByDescription(approved));
             return bookingMapper.toBookingResponseDto(bookingRepository.save(booking.get()));
-        } else throw new NotValidException("Подтвердить бронирование может только владелец");
+        } else {
+            throw new NotValidException("Подтвердить бронирование может только владелец");
+        }
     }
 
     @Override
