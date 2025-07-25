@@ -4,42 +4,40 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.CreateModelException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.dto.UserCreatedDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserInMemoryRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Objects.isNull;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserInMemoryRepository userInMemoryRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public User getUser(Integer id) {
-        if (isNull(userInMemoryRepository.getUser(id))) {
-            throw new NotFoundException("Пользователь с id: " + id + " не найден");
-        }
-        return userInMemoryRepository.getUser(id);
+        Optional<User> byId = userRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
+        } else return byId.get();
     }
 
-    public User createUser(User user) {
+    public User createUser(UserCreatedDto user) {
         if (findUserSameEmail(user.getEmail())) {
             throw new CreateModelException("Пользователь с указанным email уже существует");
         }
-        if (isNull(userInMemoryRepository.getUser(user.getId()))) {
-            return userInMemoryRepository.createUser(user);
-        }
-        throw new CreateModelException("Пользователь с id: " + user.getId() + " уже существует");
+        User users = userMapper.toUser(user);
+        return userRepository.save(users);
     }
 
     public void deleteUser(Integer id) {
-        if (isNull(userInMemoryRepository.getUser(id))) {
-            throw new NotFoundException("Пользователь с id: " + id + " не найден");
-        }
-        userInMemoryRepository.deleteUser(id);
+        this.getUser(id);
+        userRepository.deleteById(id);
     }
 
     public User updateUser(Integer id, Map<String, Object> updates) {
@@ -47,15 +45,15 @@ public class UserService {
         if (findUserSameEmail((String) updates.get("email"))) {
             throw new CreateModelException("Пользователь с указанным email уже существует");
         }
-
-        if (isNull(userInMemoryRepository.getUser(id))) {
-            throw new NotFoundException("Пользователь с id: " + id + " не найден");
-        }
-        return userInMemoryRepository.updateUser(id, updates);
+        User user = this.getUser(id);
+        user.setEmail((String) updates.get("email"));
+        user.setName((String) updates.get("name"));
+        return user;
     }
 
     private boolean findUserSameEmail(String email) {
-        List<User> users = userInMemoryRepository.getAll().stream()
+        List<User> users = userRepository.findAll()
+                .stream()
                 .filter(user -> user.getEmail().equals(email))
                 .toList();
         return !users.isEmpty();

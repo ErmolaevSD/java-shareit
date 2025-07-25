@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserCreatedDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 /**
  * TODO Sprint add-controllers.
  */
+
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody @Valid User user) {
+    public User create(@RequestBody @Valid UserCreatedDto user) {
         return userService.createUser(user);
     }
 
