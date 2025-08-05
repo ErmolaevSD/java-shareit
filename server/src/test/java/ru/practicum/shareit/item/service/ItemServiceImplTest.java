@@ -205,7 +205,7 @@ class ItemServiceImplTest {
         when(itemRepository.findById(1))
                 .thenReturn(Optional.of(item));
         when(commentRepository.findAllByItemId(1))
-                .thenReturn(List.of(new CommentDto()));
+                .thenReturn(List.of(new Comment()));
         when(itemMapper.toItemDto(item))
                 .thenReturn(itemDto);
         when(bookingRepository.findByItemId(1))

@@ -58,9 +58,10 @@ public class ItemServiceImpl implements ItemService {
         if (byId.isEmpty()) {
             throw new NotFoundException("Вещи с id " + id + " не найдено");
         }
-        List<CommentDto> allByCommentItemId = commentRepository.findAllByItemId(id);
+        List<Comment> allByCommentItemId = commentRepository.findAllByItemId(id);
         ItemDto itemDto = itemMapper.toItemDto(byId.get());
-        itemDto.setComments(allByCommentItemId);
+
+        itemDto.setComments(allByCommentItemId.stream().map(itemMapper::toCommentCommentDto).toList());
         List<Booking> bookingList = bookingRepository.findByItemId(id);
         Booking last = bookingList.stream()
                 .filter(booking -> booking.getEnd().toLocalDate().isBefore(LocalDate.now()))
