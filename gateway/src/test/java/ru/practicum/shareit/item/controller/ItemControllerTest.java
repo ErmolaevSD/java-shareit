@@ -9,8 +9,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.practicum.shareit.ShareItGateway;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.ItemClient;
 import ru.practicum.shareit.item.dto.*;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(ItemController.class)
+@ContextConfiguration(classes = ShareItGateway.class)
 class ItemControllerTest {
 
     @Autowired
