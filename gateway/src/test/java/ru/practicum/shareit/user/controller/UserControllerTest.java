@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.user.UserClient;
@@ -18,15 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -52,8 +45,8 @@ class UserControllerTest {
                 .build();
 
         mockMvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userCreatedDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreatedDto)))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<UserCreatedDto> argumentCaptor = ArgumentCaptor.forClass(UserCreatedDto.class);
@@ -91,7 +84,7 @@ class UserControllerTest {
 
         mockMvc.perform(patch("/users/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(params)))
+                        .content(objectMapper.writeValueAsString(params)))
                 .andExpect(status().isOk());
 
         verify(userClient).updateUser(1, params);

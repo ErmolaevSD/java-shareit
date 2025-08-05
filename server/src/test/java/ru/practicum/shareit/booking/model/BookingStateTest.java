@@ -32,5 +32,4 @@ class BookingStateTest {
 
         assertEquals(bookingStatus.getDescription(), actualStatus);
     }
-
 }

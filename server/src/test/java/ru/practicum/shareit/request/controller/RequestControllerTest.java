@@ -109,7 +109,7 @@ class RequestControllerTest {
                 .thenReturn(List.of(requestResponseDto));
 
         mockMvc.perform(get("/requests/all")
-                .header("X-Sharer-User-Id", 1))
+                        .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(hasSize(1)));
 

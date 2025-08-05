@@ -99,7 +99,6 @@ class ItemServiceImplTest {
                 .build();
 
 
-
         commentDto = CommentDto.builder()
                 .id(1)
                 .text("text")
@@ -130,7 +129,6 @@ class ItemServiceImplTest {
                 .nextBooking(nextBooking)
                 .comments(new ArrayList<>())
                 .build();
-
 
 
         itemCreatedDto = ItemCreatedDto.builder()
@@ -168,7 +166,6 @@ class ItemServiceImplTest {
                 .build();
 
 
-
     }
 
     @Test
@@ -186,10 +183,10 @@ class ItemServiceImplTest {
         ItemDto creadtedItemDto = itemService.createItem(1, itemCreatedDto);
 
         assertNotNull(creadtedItemDto);
-        assertEquals(itemCreatedDto.getName(),creadtedItemDto.getName());
+        assertEquals(itemCreatedDto.getName(), creadtedItemDto.getName());
 
         verify(userService).getUser(1);
-        verify(itemMapper).toCreatedDtoItem(itemCreatedDto,requestRepository);
+        verify(itemMapper).toCreatedDtoItem(itemCreatedDto, requestRepository);
         verify(requestRepository).findById(1);
         verify(itemRepository).save(item);
         verify(itemMapper).toItemDto(item);
@@ -200,7 +197,7 @@ class ItemServiceImplTest {
         when(userService.getUser(1))
                 .thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> itemService.createItem(1,itemCreatedDto));
+        assertThrows(NotFoundException.class, () -> itemService.createItem(1, itemCreatedDto));
     }
 
     @Test
@@ -219,7 +216,7 @@ class ItemServiceImplTest {
         assertNotNull(actualDto);
         assertEquals(nextBooking, actualDto.getNextBooking());
         assertEquals(lastBooking, actualDto.getLastBooking());
-        assertEquals(1,actualDto.getComments().size());
+        assertEquals(1, actualDto.getComments().size());
     }
 
     @Test
@@ -268,7 +265,7 @@ class ItemServiceImplTest {
 
         when(itemRepository.findById(1))
                 .thenReturn(Optional.of(item));
-        when(bookingRepository.findByBookerIdAndEndIsBefore(eq(1), any(LocalDateTime.class),eq(sort)))
+        when(bookingRepository.findByBookerIdAndEndIsBefore(eq(1), any(LocalDateTime.class), eq(sort)))
                 .thenReturn(List.of(nextBooking));
         when(userService.getUser(1))
                 .thenReturn(user);
@@ -279,7 +276,7 @@ class ItemServiceImplTest {
         when(itemMapper.toCommentCommentDto(comment))
                 .thenReturn(commentDto);
 
-        CommentDto actualCommentDto = itemService.postCommentByItem(1,1,commentCreatedDto);
+        CommentDto actualCommentDto = itemService.postCommentByItem(1, 1, commentCreatedDto);
 
         assertNotNull(actualCommentDto);
         assertEquals(actualCommentDto.getId(), comment.getId());
@@ -293,7 +290,7 @@ class ItemServiceImplTest {
         when(userService.getUser(1))
                 .thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> itemService.postCommentByItem(1,1,commentCreatedDto));
+        assertThrows(NotFoundException.class, () -> itemService.postCommentByItem(1, 1, commentCreatedDto));
         assertThrows(NotFoundException.class, () -> userService.getUser(1));
     }
 
@@ -306,10 +303,10 @@ class ItemServiceImplTest {
 
         when(itemRepository.findById(1))
                 .thenReturn(Optional.of(item));
-        when(bookingRepository.findByBookerIdAndEndIsBefore(eq(1), any(LocalDateTime.class),eq(sort)))
+        when(bookingRepository.findByBookerIdAndEndIsBefore(eq(1), any(LocalDateTime.class), eq(sort)))
                 .thenReturn(List.of(booking));
 
-        assertThrows(NotValidException.class, () -> itemService.postCommentByItem(1,1,commentCreatedDto));
+        assertThrows(NotValidException.class, () -> itemService.postCommentByItem(1, 1, commentCreatedDto));
     }
 
 
@@ -324,13 +321,13 @@ class ItemServiceImplTest {
         when(itemMapper.toDtoItem(itemDto))
                 .thenReturn(item);
 
-        when(itemMapper.updateItemFromDto(itemDto,item))
+        when(itemMapper.updateItemFromDto(itemDto, item))
                 .thenReturn(item);
 
         when(itemMapper.toItemDto(item))
                 .thenReturn(itemDto);
 
-        ItemDto actualItemDto = itemService.updateItem(1, 1,itemDto);
+        ItemDto actualItemDto = itemService.updateItem(1, 1, itemDto);
         assertNotNull(actualItemDto);
     }
 }

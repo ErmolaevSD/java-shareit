@@ -2,17 +2,14 @@ package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.booking.dto.BookingCreatedDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.CommentCreatedDto;
@@ -137,13 +134,13 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void testCreate_whenValid_thenStatusOk() {
-        when(itemService.createItem(1,itemCreatedDto))
+        when(itemService.createItem(1, itemCreatedDto))
                 .thenReturn(itemDto);
 
         mockMvc.perform(post("/items")
-                .header("X-Sharer-User-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(itemCreatedDto)))
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(itemCreatedDto)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -160,9 +157,9 @@ class ItemControllerTest {
         when(itemService.getItem(1))
                 .thenReturn(itemDto);
 
-        mockMvc.perform(get("/items/{itemId}",1)
-                .header("X-Sharer-User-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/items/{itemId}", 1)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemDto.getId()));
 
@@ -176,8 +173,8 @@ class ItemControllerTest {
                 .thenReturn(List.of(new ItemDto(), new ItemDto()));
 
         mockMvc.perform(get("/items")
-                .header("X-Sharer-User-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(hasSize(2)));
     }
@@ -185,16 +182,16 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void testUpdate_whenValid_thenUpdateItem() {
-       when(itemService.updateItem(eq(1),eq(1),any(ItemDto.class)))
-               .thenReturn(itemDto);
+        when(itemService.updateItem(eq(1), eq(1), any(ItemDto.class)))
+                .thenReturn(itemDto);
 
-       mockMvc.perform(patch("/items/{itemId}", 1)
-               .contentType(MediaType.APPLICATION_JSON)
-               .header("X-Sharer-User-Id", 1)
-               .content(objectMapper.writeValueAsString(itemDto)))
-               .andExpect(status().isOk());
+        mockMvc.perform(patch("/items/{itemId}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1)
+                        .content(objectMapper.writeValueAsString(itemDto)))
+                .andExpect(status().isOk());
 
-       verify(itemService).updateItem(eq(1),eq(1),any(ItemDto.class));
+        verify(itemService).updateItem(eq(1), eq(1), any(ItemDto.class));
     }
 
     @SneakyThrows
@@ -204,8 +201,8 @@ class ItemControllerTest {
                 .thenReturn(List.of(new ItemDto(), new ItemDto()));
 
         mockMvc.perform(get("/items/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("text", "text"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("text", "text"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(hasSize(2)));
 
@@ -216,13 +213,13 @@ class ItemControllerTest {
     @Test
     void createCommentByItem() {
 
-        when(itemService.postCommentByItem(1,1,commentCreatedDto))
+        when(itemService.postCommentByItem(1, 1, commentCreatedDto))
                 .thenReturn(commentDto);
 
         mockMvc.perform(post("/items/{itemId}/comment", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-Sharer-User-Id", 1)
-                .content(objectMapper.writeValueAsString(commentCreatedDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1)
+                        .content(objectMapper.writeValueAsString(commentCreatedDto)))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<CommentCreatedDto> argumentCaptor = ArgumentCaptor.forClass(CommentCreatedDto.class);

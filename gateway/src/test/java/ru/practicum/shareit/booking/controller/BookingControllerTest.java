@@ -14,10 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.ShareItGateway;
 import ru.practicum.shareit.booking.BookingClient;
 import ru.practicum.shareit.booking.dto.BookItemRequestCreatedDto;
-import ru.practicum.shareit.booking.dto.BookingCreatedDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -54,12 +52,10 @@ class BookingControllerTest {
     void testGetAllBooking_whenValid_thenStatusOk() {
 
         mockMvc.perform(get("/bookings")
-                .header("X-Sharer-User-Id", 1L))
+                        .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk());
 
         verify(bookingClient).getBookings(1L);
-
-
     }
 
 
@@ -99,7 +95,7 @@ class BookingControllerTest {
     @Test
     void testApprovedBooking_whenValid_thenStatusOk() {
 
-        mockMvc.perform(patch("/bookings/{bookingId}",1)
+        mockMvc.perform(patch("/bookings/{bookingId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("approved", "true")
                         .header("X-Sharer-User-Id", 1))
@@ -152,8 +148,4 @@ class BookingControllerTest {
         verify(bookingClient).getAllBookingByOwner(1L, state);
         assertEquals(objectMapper.writeValueAsString(bookingList), result);
     }
-
-//    @Test
-//    void testGetBookings() {
-//    }
 }

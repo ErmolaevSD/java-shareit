@@ -50,13 +50,13 @@ class BookingServiceDbTest {
     private Booking booking;
     private BookingResponseDto bookingResponseDto;
 
-        @BeforeEach
+    @BeforeEach
     void setUp() {
 
-            user = User.builder()
-                    .id(1)
-                    .name("userName")
-                    .email("user@bk.ru").build();
+        user = User.builder()
+                .id(1)
+                .name("userName")
+                .email("user@bk.ru").build();
 
         item = Item.builder()
                 .id(1)
@@ -73,7 +73,6 @@ class BookingServiceDbTest {
                 .id(1)
                 .name("bookerName")
                 .email("booker@bk.ru").build();
-
 
 
         booking = Booking.builder()
@@ -158,34 +157,34 @@ class BookingServiceDbTest {
 
         assertNotNull(actualBooking);
         assertEquals(BookingStatus.APPROVED, actualBooking.getStatus());
-        verify(bookingRepository).save(argThat(b-> b.getStatus() == BookingStatus.APPROVED));
+        verify(bookingRepository).save(argThat(b -> b.getStatus() == BookingStatus.APPROVED));
     }
 
     @Test
     void testGetAllBookingByUserALL_whenValid_thenReturnedAllBooking() {
-            when(userService.getUser(1))
-                    .thenReturn(user);
+        when(userService.getUser(1))
+                .thenReturn(user);
 
-            when(bookingRepository.findByItemOwnerId(1, Sort.by(Sort.Direction.DESC, "start")))
-                    .thenReturn(List.of(new Booking(),new Booking()));
+        when(bookingRepository.findByItemOwnerId(1, Sort.by(Sort.Direction.DESC, "start")))
+                .thenReturn(List.of(new Booking(), new Booking()));
 
-            List<Booking> actualBookingAllList = bookingService.getAllBookingByOwner(1, BookingState.ALL);
+        List<Booking> actualBookingAllList = bookingService.getAllBookingByOwner(1, BookingState.ALL);
 
-            assertNotNull(actualBookingAllList);
-            assertEquals(2, actualBookingAllList.size());
+        assertNotNull(actualBookingAllList);
+        assertEquals(2, actualBookingAllList.size());
     }
 
     @Test
     void testGetAllBookingByUser_whenValid_thenReturnedAllBookingByUser() {
-            when(userService.getUser(anyInt()))
-                    .thenReturn(user);
+        when(userService.getUser(anyInt()))
+                .thenReturn(user);
 
-            when(bookingRepository.findByBookerId(eq(1),any(Sort.class)))
-                    .thenReturn(List.of(booking));
+        when(bookingRepository.findByBookerId(eq(1), any(Sort.class)))
+                .thenReturn(List.of(booking));
 
-            List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.ALL);
-            assertNotNull(actualListBooking);
-            assertEquals(booking, actualListBooking.getFirst());
+        List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.ALL);
+        assertNotNull(actualListBooking);
+        assertEquals(booking, actualListBooking.getFirst());
     }
 
     @Test
@@ -193,7 +192,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(eq(1),any(LocalDateTime.class), any(LocalDateTime.class),any(Sort.class)))
+        when(bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(eq(1), any(LocalDateTime.class), any(LocalDateTime.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.CURRENT);
@@ -206,7 +205,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByBookerIdAndEndIsBefore(eq(1),any(LocalDateTime.class),any(Sort.class)))
+        when(bookingRepository.findByBookerIdAndEndIsBefore(eq(1), any(LocalDateTime.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.PAST);
@@ -219,7 +218,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByBookerIdAndStartIsAfter(eq(1),any(LocalDateTime.class),any(Sort.class)))
+        when(bookingRepository.findByBookerIdAndStartIsAfter(eq(1), any(LocalDateTime.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.FUTURE);
@@ -232,7 +231,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByBookerIdAndStatus(eq(1),any(BookingStatus.class),any(Sort.class)))
+        when(bookingRepository.findByBookerIdAndStatus(eq(1), any(BookingStatus.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.WAITING);
@@ -245,7 +244,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByBookerIdAndStatus(eq(1),any(BookingStatus.class),any(Sort.class)))
+        when(bookingRepository.findByBookerIdAndStatus(eq(1), any(BookingStatus.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByUser(1, BookingState.REJECTED);
@@ -259,7 +258,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByItemOwnerId(eq(1),any(Sort.class)))
+        when(bookingRepository.findByItemOwnerId(eq(1), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByOwner(1, BookingState.ALL);
@@ -272,7 +271,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(eq(1),any(LocalDateTime.class), any(LocalDateTime.class),any(Sort.class)))
+        when(bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(eq(1), any(LocalDateTime.class), any(LocalDateTime.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByOwner(1, BookingState.CURRENT);
@@ -285,7 +284,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByItemOwnerIdAndEndIsBefore(eq(1),any(LocalDateTime.class),any(Sort.class)))
+        when(bookingRepository.findByItemOwnerIdAndEndIsBefore(eq(1), any(LocalDateTime.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByOwner(1, BookingState.PAST);
@@ -298,7 +297,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByItemOwnerIdAndStartIsAfter(eq(1),any(LocalDateTime.class),any(Sort.class)))
+        when(bookingRepository.findByItemOwnerIdAndStartIsAfter(eq(1), any(LocalDateTime.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByOwner(1, BookingState.FUTURE);
@@ -311,7 +310,7 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByItemOwnerIdAndStatus(eq(1),any(BookingStatus.class),any(Sort.class)))
+        when(bookingRepository.findByItemOwnerIdAndStatus(eq(1), any(BookingStatus.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByOwner(1, BookingState.WAITING);
@@ -324,13 +323,11 @@ class BookingServiceDbTest {
         when(userService.getUser(anyInt()))
                 .thenReturn(user);
 
-        when(bookingRepository.findByItemOwnerIdAndStatus(eq(1),any(BookingStatus.class),any(Sort.class)))
+        when(bookingRepository.findByItemOwnerIdAndStatus(eq(1), any(BookingStatus.class), any(Sort.class)))
                 .thenReturn(List.of(booking));
 
         List<Booking> actualListBooking = bookingService.getAllBookingByOwner(1, BookingState.REJECTED);
         assertNotNull(actualListBooking);
         assertEquals(booking, actualListBooking.getFirst());
     }
-
-
 }
