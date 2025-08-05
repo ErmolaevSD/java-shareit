@@ -34,7 +34,7 @@ class ItemMapperTest {
     @Mock
     private RequestRepository requestRepository;
 
-    private ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+    private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
 
     private ItemCreatedDto itemCreatedDto;
     private ItemDto itemDto;
