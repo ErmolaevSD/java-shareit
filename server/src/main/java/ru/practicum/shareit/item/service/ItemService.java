@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ItemService {
     ItemDto createItem(Integer ownerId,
-                    ItemCreatedDto itemDto);
+                       ItemCreatedDto itemDto);
 
     ItemDto getItem(Integer id);
 

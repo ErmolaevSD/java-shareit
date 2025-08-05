@@ -29,7 +29,7 @@ import static ru.practicum.shareit.booking.model.BookingStatus.WAITING;
 
 @Service
 @RequiredArgsConstructor
-public  class BookingServiceDb implements BookingService {
+public class BookingServiceDb implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final ItemService itemService;

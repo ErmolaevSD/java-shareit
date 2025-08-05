@@ -14,7 +14,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,23 +44,23 @@ class RequestControllerTest {
                 .build();
 
         mockMvc.perform(post("/requests")
-                .header("X-Sharer-User-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(itemRequestDto)))
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(itemRequestDto)))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<ItemRequestDto> argumentCaptor = ArgumentCaptor.forClass(ItemRequestDto.class);
         verify(requestClient).create(eq(1), argumentCaptor.capture());
 
         ItemRequestDto captorValue = argumentCaptor.getValue();
-        assertEquals(itemRequestDto.getDescription(),captorValue.getDescription());
+        assertEquals(itemRequestDto.getDescription(), captorValue.getDescription());
     }
 
     @SneakyThrows
     @Test
     void testGetMyRequest_whenValid_thenStatusOk() {
         mockMvc.perform(get("/requests")
-                .header("X-Sharer-User-Id", 1))
+                        .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
 
         verify(requestClient).getMyRequest(1);

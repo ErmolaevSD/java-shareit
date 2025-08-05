@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,11 +31,9 @@ import static org.mockito.Mockito.when;
 class ItemMapperTest {
 
 
+    private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
     @Mock
     private RequestRepository requestRepository;
-
-    private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
-
     private ItemCreatedDto itemCreatedDto;
     private ItemDto itemDto;
     private User user;
