@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
