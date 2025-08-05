@@ -13,6 +13,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -32,15 +34,22 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemDto createItem(Integer ownerId,
                               ItemCreatedDto itemDto) {
         User user = userService.getUser(ownerId);
-        Item item = itemMapper.toCreatedDtoItem(itemDto);
+        Item item = itemMapper.toCreatedDtoItem(itemDto, requestRepository);
         item.setOwner(user);
-        itemRepository.save(item);
-        return itemMapper.toItemDto(item);
+
+        if (!(itemDto.getRequestId() == null)) {
+            Optional<ItemRequest> request = requestRepository.findById(itemDto.getRequestId());
+            item.setRequest(request.get());
+        }
+
+        Item save = itemRepository.save(item);
+        return itemMapper.toItemDto(save);
     }
 
     @Override
@@ -75,7 +84,8 @@ public class ItemServiceImpl implements ItemService {
                               Integer itemId,
                               ItemDto itemDto) {
         userService.getUser(ownerId);
-        Item item = itemMapper.toDtoItem(this.getItem(itemId));
+        ItemDto findItemDto = getItem(itemId);
+        Item item = itemMapper.toDtoItem(findItemDto);
         if (!item.getOwner().getId().equals(ownerId)) {
             throw new NotValidException("Обновить вещь может только владелец");
         } else {
@@ -114,7 +124,6 @@ public class ItemServiceImpl implements ItemService {
         Comment createdComment = Comment.builder()
                 .item(item)
                 .text(comment.getText())
-                .author(user)
                 .author(user)
                 .created(LocalDateTime.now())
                 .build();

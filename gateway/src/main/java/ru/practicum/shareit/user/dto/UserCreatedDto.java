@@ -18,5 +18,3 @@ public class UserCreatedDto {
     @NotBlank(message = "Электронная почта не может быть null")
     private String email;
 }
-
-

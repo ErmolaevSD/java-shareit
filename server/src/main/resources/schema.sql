@@ -31,7 +31,9 @@ CREATE TABLE IF NOT EXISTS bookings (
 CREATE TABLE IF NOT EXISTS request (
     id BIGINT GENERATED ALWAYS AS identity PRIMARY KEY,
     description varchar(255),
-    requestor_id BIGINT REFERENCES users(id)
+    item_id BIGINT REFERENCES items(id),
+    requestor_id BIGINT REFERENCES users(id),
+    created TIMESTAMP WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS comments (

@@ -100,7 +100,6 @@ public  class BookingServiceDb implements BookingService {
             case REJECTED -> bookingRepository.findByBookerIdAndStatus(ownerId, REJECTED, sort);
             case ALL -> bookingRepository.findByBookerId(ownerId, sort);
         };
-
     }
 
     @Override

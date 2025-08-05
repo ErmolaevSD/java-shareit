@@ -1,13 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemCreatedDto {
 
     private String name;
@@ -15,6 +15,8 @@ public class ItemCreatedDto {
     private String description;
 
     private Boolean available;
+
+    private Integer requestId;
 }
 
 

@@ -10,7 +10,6 @@ import lombok.*;
 public class UserCreatedDto {
 
     private String name;
-
     private String email;
 }
 

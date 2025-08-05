@@ -36,7 +36,10 @@ public class UserService {
     }
 
     public void deleteUser(Integer id) {
-        this.getUser(id);
+        Optional<User> byId = userRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
+        }
         userRepository.deleteById(id);
     }
 

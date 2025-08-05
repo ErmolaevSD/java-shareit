@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BookingStatus {
-    WAITING("default"),
+    WAITING(""),
     APPROVED("true"),
     REJECTED("false");
 

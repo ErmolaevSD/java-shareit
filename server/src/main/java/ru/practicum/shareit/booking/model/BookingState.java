@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BookingState {
-    ALL(""),
+    ALL("ALL"),
     WAITING("WAITING"),
     CURRENT("CURRENT"),
     PAST("PAST"),

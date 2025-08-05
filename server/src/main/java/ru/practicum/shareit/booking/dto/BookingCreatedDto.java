@@ -4,17 +4,12 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Getter
 @Setter
 @Builder
 public class BookingCreatedDto {
 
     private Integer itemId;
-
     private LocalDateTime start;
-
     private LocalDateTime end;
 }
