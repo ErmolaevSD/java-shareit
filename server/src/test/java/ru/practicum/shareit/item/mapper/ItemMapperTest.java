@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +48,7 @@ class ItemMapperTest {
     private List<Item> itemList = new ArrayList<>();
     private CommentDto commentDto;
     private CommentCreatedDto commentCreatedDto;
+    private Comment comment;
 
     @BeforeEach
     void setUp() {
@@ -117,6 +117,14 @@ class ItemMapperTest {
                 .lastBooking(lastBooking)
                 .nextBooking(nextBooking)
                 .comments(new ArrayList<>())
+                .build();
+
+        comment = Comment.builder()
+                .text("name")
+                .created(LocalDateTime.now())
+                .item(item)
+                .author(user)
+                .id(1)
                 .build();
 
     }
@@ -190,6 +198,14 @@ class ItemMapperTest {
     }
 
     @Test
+    void mapToComment() {
+        assertNull(itemMapper.mapComment(null));
+
+        List<CommentDto> actual = itemMapper.mapComment(List.of(comment));
+        assertEquals(comment.getText(), actual.getFirst().getText());
+    }
+
+    @Test
     void testMapToRequestAndComment_whenNotValid_thenNull() {
         assertNull(itemMapper.mapToRequest(null, requestRepository));
         assertNull(itemMapper.mapComment(null));
@@ -201,6 +217,71 @@ class ItemMapperTest {
         assertNull(itemMapper.toItemDto(null));
         assertNull(itemMapper.toDtoItem(null));
         assertNull(itemMapper.toCommentCommentDto(null));
+    }
 
+    @Test
+    void updateItemFromDto_ShouldUpdateNonNullFields() {
+        ItemDto dto = ItemDto.builder()
+                .comments(List.of(commentDto))
+                .nextBooking(nextBooking)
+                .lastBooking(lastBooking)
+                .owner(user)
+                .requestId(1)
+                .name("New Name")
+                .description("New Description")
+                .available(false)
+                .build();
+
+        Item item = Item.builder()
+                .id(1)
+                .name("Old Name")
+                .description("Old Description")
+                .available(true)
+                .build();
+
+        Item updatedItem = itemMapper.updateItemFromDto(dto, item);
+
+        assertAll(
+                () -> assertEquals(1, updatedItem.getId()),
+                () -> assertEquals("New Name", updatedItem.getName()),
+                () -> assertEquals("New Description", updatedItem.getDescription()),
+                () -> assertFalse(updatedItem.getAvailable())
+        );
+
+        assertEquals(lastBooking, updatedItem.getLastBooking());
+    }
+
+    @Test
+    void updateItemFromDto_ShouldIgnoreNullFields() {
+        ItemDto dto = ItemDto.builder()
+                .name(null)
+                .available(false)
+                .build();
+
+        Item item = Item.builder()
+                .id(1)
+                .name("Old Name")
+                .available(true)
+                .build();
+
+        Item updatedItem = itemMapper.updateItemFromDto(dto, item);
+
+        assertAll(
+                () -> assertEquals("Old Name", updatedItem.getName()),
+                () -> assertFalse(updatedItem.getAvailable())
+        );
+    }
+
+    @Test
+    void updateItemFromDto_ShouldMapRequestIdToItemRequest() {
+        ItemDto dto = ItemDto.builder()
+                .requestId(100)
+                .build();
+
+        Item item = new Item();
+        Item updatedItem = itemMapper.updateItemFromDto(dto, item);
+
+        assertNotNull(updatedItem.getRequest());
+        assertEquals(100, updatedItem.getRequest().getId());
     }
 }

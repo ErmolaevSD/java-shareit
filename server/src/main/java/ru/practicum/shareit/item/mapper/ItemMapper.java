@@ -26,6 +26,7 @@ public interface ItemMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "request", source = "requestId", qualifiedByName = "idToItemRequest")
     Item updateItemFromDto(ItemDto itemDto, @MappingTarget Item item);
 
     @Mapping(target = "authorName", source = "author.name")
@@ -48,4 +49,12 @@ public interface ItemMapper {
                 .map(this::toCommentCommentDto)
                 .collect(Collectors.toList());
     }
+
+    @Named("idToItemRequest")
+    default ItemRequest idToItemRequest(Integer requestId) {
+        if (requestId == null) return null;
+        return ItemRequest.builder().id(requestId).build();
+    }
+
+
 }
