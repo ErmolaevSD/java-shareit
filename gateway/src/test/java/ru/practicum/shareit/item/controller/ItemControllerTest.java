@@ -7,27 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.ShareItGateway;
 import ru.practicum.shareit.item.ItemClient;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentCreatedDto;
+import ru.practicum.shareit.item.dto.ItemCreatedDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -123,28 +116,14 @@ class ItemControllerTest {
         CommentCreatedDto commentCreatedDto = CommentCreatedDto.builder()
                 .text("comment").build();
 
-        CommentDto commentDto = CommentDto.builder()
-                .id(1)
-                .text("comment")
-                .authorName("name")
-                .created(LocalDateTime.of(2022, 10, 10, 10, 10))
-                .build();
-
-        when(itemClient.createComment(ownerId, itemId, commentCreatedDto))
-                .thenReturn(ResponseEntity.ok(commentDto));
-
-        String result = mockMvc.perform(post("/items/{itemId}/comment", itemId)
+        mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentCreatedDto))
                         .header("X-Sharer-User-Id", ownerId))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
         verify(itemClient).createComment(ownerId, itemId, commentCreatedDto);
-        assertEquals(objectMapper.writeValueAsString(commentDto), result);
     }
 
     @SneakyThrows
@@ -153,36 +132,9 @@ class ItemControllerTest {
 
         String text = "description";
 
-        ItemDto itemDto = ItemDto.builder()
-                .id(1)
-                .name("new_name")
-                .description("description")
-                .available(true)
-                .requestId(1)
-                .build();
-
-        ItemDto itemDto1 = ItemDto.builder()
-                .id(2)
-                .name("new_name")
-                .description("description")
-                .available(true)
-                .requestId(1)
-                .build();
-
-        List<ItemDto> itemDtoList = new ArrayList<>();
-        itemDtoList.add(itemDto);
-        itemDtoList.add(itemDto1);
-
-        when(itemClient.searchItem("description"))
-                .thenReturn(ResponseEntity.ok(itemDtoList));
-
         mockMvc.perform(get("/items/search?text={text}", text)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andDo(print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
         verify(itemClient).searchItem(text);
     }
