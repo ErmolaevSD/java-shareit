@@ -30,7 +30,7 @@ public class RequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getMyRequest(Integer ownerId) {
-        return get("", ownerId);
+        return get("", Long.valueOf(ownerId), null);
     }
 
     public ResponseEntity<Object> getRequestById(Integer id) {

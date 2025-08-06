@@ -12,6 +12,9 @@ import ru.practicum.shareit.item.dto.CommentCreatedDto;
 import ru.practicum.shareit.item.dto.ItemCreatedDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class ItemClient extends BaseClient {
 
@@ -40,7 +43,7 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAllItem(Integer ownerId) {
-        return get("", ownerId);
+        return get("", ownerId.longValue(), null);
     }
 
     public ResponseEntity<Object> createComment(Integer ownerId, Integer itemId, CommentCreatedDto commentCreatedDto) {
@@ -48,6 +51,8 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> searchItem(String text) {
-        return get("", text);
+        Map<String, Object> params = new HashMap<>();
+        params.put("text", text);
+        return get("?text={text}", null, params);
     }
 }

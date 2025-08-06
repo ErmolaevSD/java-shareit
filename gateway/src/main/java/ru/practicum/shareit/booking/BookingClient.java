@@ -28,7 +28,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getBookings(long userId) {
-        return get("", userId);
+        return get("", userId, null);
     }
 
     public ResponseEntity<Object> bookItem(long userId, BookItemRequestCreatedDto requestDto) {
@@ -36,7 +36,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
-        return get("/" + bookingId, userId);
+        return get("/" + bookingId, userId, null);
     }
 
     public ResponseEntity<Object> approveBooking(long ownerId, Integer bookingId, String approved) {

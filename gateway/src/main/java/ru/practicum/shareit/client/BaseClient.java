@@ -33,13 +33,14 @@ public class BaseClient {
         return get(path, null, null);
     }
 
-    protected ResponseEntity<Object> get(String path, long userId) {
-        return get(path, userId, null);
-    }
-
-    protected ResponseEntity<Object> get(String path, String text) {
-        return get(path, text);
-    }
+//    protected ResponseEntity<Object> get(String path, long userId) {
+//        return get(path, userId, null);
+//    }
+//
+//    protected ResponseEntity<Object> get(String path, String text) {
+//        return rest.exchange(HttpMethod.GET, path, text);
+//
+//    }
 
     protected ResponseEntity<Object> get(String path, Long userId, @Nullable Map<String, Object> parameters) {
         return makeAndSendRequest(HttpMethod.GET, path, userId, parameters, null);
