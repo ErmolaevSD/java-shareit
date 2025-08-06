@@ -285,7 +285,7 @@ class ItemServiceImplTest {
     @Test
     void testPostCommentByItem_whenNotFoundItemAndUser() {
         when(itemRepository.findById(1))
-                .thenThrow(NotFoundException.class);
+                .thenReturn(Optional.empty());
 
         when(userService.getUser(1))
                 .thenThrow(NotFoundException.class);
@@ -330,4 +330,21 @@ class ItemServiceImplTest {
         ItemDto actualItemDto = itemService.updateItem(1, 1, itemDto);
         assertNotNull(actualItemDto);
     }
+
+    @Test
+    void testUpdate_whenNotOwner_thenNotValidException() {
+        when(userService.getUser(1))
+                .thenReturn(user);
+        when(itemRepository.findById(1))
+                .thenReturn(Optional.of(item));
+        Item newItem = item;
+        newItem.getOwner().setId(199);
+        when(itemMapper.toDtoItem(any(ItemDto.class)))
+                .thenReturn(newItem);
+        when(itemMapper.toItemDto(item))
+                .thenReturn(itemDto);
+
+        assertThrows(NotValidException.class, () -> itemService.updateItem(1,1,itemDto));
+    }
+
 }

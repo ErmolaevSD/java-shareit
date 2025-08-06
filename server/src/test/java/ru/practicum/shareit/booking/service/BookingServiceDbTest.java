@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+import ru.practicum.shareit.booking.dto.BookingCreatedDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -15,7 +16,11 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.NotValidException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -44,14 +49,28 @@ class BookingServiceDbTest {
     @Mock
     private BookingMapper bookingMapper;
 
+    @Mock
+    private ItemService itemService;
+
+    @Mock
+    private ItemMapper itemMapper;
+
     private Item item;
     private User booker;
     private User user;
     private Booking booking;
     private BookingResponseDto bookingResponseDto;
+    private ItemDto itemDto;
+    private BookingCreatedDto bookingCreatedDto;
 
     @BeforeEach
     void setUp() {
+
+        bookingCreatedDto = BookingCreatedDto.builder()
+                .itemId(1)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now())
+                .build();
 
         user = User.builder()
                 .id(1)
@@ -63,6 +82,18 @@ class BookingServiceDbTest {
                 .name("itemName")
                 .description("itemDescription")
                 .available(true)
+                .owner(user)
+                .lastBooking(new Booking())
+                .nextBooking(new Booking())
+                .comments(new ArrayList<>())
+                .build();
+
+        itemDto = ItemDto.builder()
+                .id(1)
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(true)
+                .requestId(1)
                 .owner(user)
                 .lastBooking(new Booking())
                 .nextBooking(new Booking())
@@ -94,6 +125,24 @@ class BookingServiceDbTest {
     }
 
     @Test
+    void testCreateBooking_whenValid_thenCreatedBooking() {
+
+        when(userService.getUser(anyInt()))
+                .thenReturn(user);
+        when(itemService.getItem(anyInt()))
+                .thenReturn(itemDto);
+        when(bookingMapper.toDtoBooking(bookingCreatedDto))
+                .thenReturn(booking);
+        when(bookingRepository.save(booking))
+                .thenReturn(booking);
+        when(bookingMapper.toBookingResponseDto(booking))
+                .thenReturn(bookingResponseDto);
+
+        BookingResponseDto actualResponseBooking = bookingService.createBooking(1, bookingCreatedDto);
+        assertNotNull(actualResponseBooking);
+    }
+
+    @Test
     void testGetBooking_whenValid_thenReturnedBooking() {
 
         when(bookingRepository.findById(booking.getId()))
@@ -110,7 +159,7 @@ class BookingServiceDbTest {
     @Test
     void testGetBooking_whenNotFoundBookingId_thenNotFoundException() {
         when(bookingRepository.findById(booking.getId()))
-                .thenThrow(NotFoundException.class);
+                .thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookingService.getBooking(1, 1));
     }

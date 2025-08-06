@@ -88,10 +88,6 @@ public class BookingServiceDb implements BookingService {
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         LocalDateTime now = LocalDateTime.now();
 
-        if (isNull(state)) {
-            state = BookingState.ALL;
-        }
-
         return switch (state) {
             case CURRENT -> bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(ownerId, now, now, sort);
             case PAST -> bookingRepository.findByBookerIdAndEndIsBefore(ownerId, now, sort);
@@ -107,10 +103,6 @@ public class BookingServiceDb implements BookingService {
         userService.getUser(ownerId);
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         LocalDateTime now = LocalDateTime.now();
-
-        if (isNull(state)) {
-            state = BookingState.ALL;
-        }
 
         return switch (state) {
             case CURRENT -> bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(ownerId, now, now, sort);
