@@ -39,6 +39,7 @@ public interface ItemMapper {
         return requestRepository.findById(requestId).orElse(null);
     }
 
+    @Named("commentToCommentDto")
     default List<CommentDto> mapComment(List<Comment> comments) {
         if (isNull(comments)) {
             return null;

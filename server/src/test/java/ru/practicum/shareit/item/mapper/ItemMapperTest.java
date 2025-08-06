@@ -14,6 +14,7 @@ import ru.practicum.shareit.item.dto.ItemCreatedDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +36,9 @@ class ItemMapperTest {
     private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
     @Mock
     private RequestRepository requestRepository;
+    @Mock
+    private CommentRepository commentRepository;
+
     private ItemCreatedDto itemCreatedDto;
     private ItemDto itemDto;
     private User user;
@@ -182,5 +187,20 @@ class ItemMapperTest {
 
         assertEquals(expectedRequest, actualRequest);
         verify(requestRepository).findById(1);
+    }
+
+    @Test
+    void testMapToRequestAndComment_whenNotValid_thenNull() {
+        assertNull(itemMapper.mapToRequest(null, requestRepository));
+        assertNull(itemMapper.mapComment(null));
+    }
+
+    @Test
+    void testCreate_whenNull_thenReturnedNull() {
+        assertNull(itemMapper.toCreatedDtoItem(null, requestRepository));
+        assertNull(itemMapper.toItemDto(null));
+        assertNull(itemMapper.toDtoItem(null));
+        assertNull(itemMapper.toCommentCommentDto(null));
+
     }
 }
