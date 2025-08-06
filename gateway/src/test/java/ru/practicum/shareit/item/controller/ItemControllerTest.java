@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,11 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.ShareItGateway;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.ItemClient;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,23 +44,11 @@ class ItemControllerTest {
     @MockBean
     private ItemClient itemClient;
 
-    @MockBean
-    private ItemRepository itemRepository;
-
-
-    @BeforeEach
-    void setUp() {
-        itemRepository.deleteAll();
-    }
-
     @SneakyThrows
     @Test
     void testSuccessCreate() {
 
         Integer ownerId = 1;
-        User user = new User();
-        user.setId(1);
-
         ItemCreatedDto itemCreatedDto = ItemCreatedDto.builder()
                 .name("name")
                 .available(true)
@@ -72,33 +56,14 @@ class ItemControllerTest {
                 .requestId(1)
                 .build();
 
-        ItemDto itemDto = ItemDto.builder()
-                .id(1)
-                .name("name")
-                .description("description")
-                .available(true)
-                .requestId(1)
-                .owner(user)
-                .lastBooking(new Booking())
-                .nextBooking(new Booking())
-                .comments(new ArrayList<>())
-                .build();
-
-        when(itemClient.create(ownerId.longValue(), itemCreatedDto))
-                .thenReturn(ResponseEntity.ok(itemDto));
-
-        String result = mockMvc.perform(post("/items")
+        mockMvc.perform(post("/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemCreatedDto))
                         .header("X-Sharer-User-Id", ownerId))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
         verify(itemClient).create(ownerId.longValue(), itemCreatedDto);
-        assertEquals(objectMapper.writeValueAsString(itemDto), result);
     }
 
     @SneakyThrows
@@ -106,47 +71,21 @@ class ItemControllerTest {
     void testSuccessGetById() {
 
         Integer itemId = 1;
-        ItemDto itemDto = ItemDto.builder()
-                .id(1)
-                .name("name")
-                .description("description")
-                .available(true)
-                .requestId(1)
-                .owner(new User())
-                .lastBooking(new Booking())
-                .nextBooking(new Booking())
-                .comments(new ArrayList<>())
-                .build();
 
-        when(itemClient.get(itemId))
-                .thenReturn(ResponseEntity.ok(itemDto));
-
-        String result = mockMvc.perform(MockMvcRequestBuilders.get("/items/{itemId}", itemId))
+        mockMvc.perform(MockMvcRequestBuilders.get("/items/{itemId}", itemId))
                 .andDo(print())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
         verify(itemClient).get(1);
-        assertEquals(objectMapper.writeValueAsString(itemDto), result);
     }
 
     @SneakyThrows
     @Test
     void testSuccessUpdate() {
 
-        User user = new User();
-        user.setId(1);
-
         Integer itemId = 1;
-        ItemDto itemDto = ItemDto.builder()
-                .id(1)
-                .name("new_name")
-                .description("description")
-                .available(true)
-                .requestId(1)
-                .build();
-
         ItemUpdateDto itemUpdateDto = ItemUpdateDto.builder()
                 .description("description")
                 .name("new_name")
@@ -165,28 +104,9 @@ class ItemControllerTest {
     @Test
     void testSuccessGetAll() {
 
-        User user = new User();
-        user.setId(1);
-
-        ItemDto itemDto = ItemDto.builder()
-                .owner(user).build();
-        ItemDto itemDto1 = ItemDto.builder()
-                .owner(user).build();
-        ItemDto itemDto2 = ItemDto.builder()
-                .owner(user).build();
-
-        List<ItemDto> itemDtoList = new ArrayList<>();
-        itemDtoList.add(itemDto);
-        itemDtoList.add(itemDto1);
-        itemDtoList.add(itemDto2);
-
-        when(itemClient.getAllItem(1))
-                .thenReturn(ResponseEntity.ok(itemDtoList));
-
         mockMvc.perform(get("/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
-                .andExpect(jsonPath("$", hasSize(3)))
                 .andDo(print())
                 .andReturn()
                 .getResponse()

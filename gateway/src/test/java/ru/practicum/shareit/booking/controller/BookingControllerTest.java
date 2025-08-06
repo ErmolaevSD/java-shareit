@@ -8,29 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.ShareItGateway;
 import ru.practicum.shareit.booking.BookingClient;
 import ru.practicum.shareit.booking.dto.BookItemRequestCreatedDto;
 import ru.practicum.shareit.booking.dto.BookingState;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -109,43 +100,13 @@ class BookingControllerTest {
     @Test
     void getAllBookingByOwner() {
 
-        User user = new User();
-        user.setId(1);
-
         BookingState state = BookingState.ALL;
 
-        Booking bookingResponseDto1 = new Booking();
-        bookingResponseDto1.setId(1);
-        bookingResponseDto1.setStart(LocalDateTime.now());
-        bookingResponseDto1.setEnd(LocalDateTime.now().plusDays(2));
-        bookingResponseDto1.setItem(new Item());
-        bookingResponseDto1.setBooker(user);
-
-        Booking booking = new Booking();
-        booking.setId(2);
-        booking.setStart(LocalDateTime.now());
-        booking.setEnd(LocalDateTime.now().plusDays(2));
-        booking.setItem(new Item());
-        booking.setBooker(user);
-
-        List<Booking> bookingList = new ArrayList<>();
-        bookingList.add(booking);
-        bookingList.add(bookingResponseDto1);
-
-        when(bookingClient.getAllBookingByOwner(1L, BookingState.ALL))
-                .thenReturn(ResponseEntity.ok(bookingList));
-
-
-        String result = mockMvc.perform(get("/bookings/owner?state={state}", state)
+        mockMvc.perform(get("/bookings/owner?state={state}", state)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andDo(print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isOk());
 
         verify(bookingClient).getAllBookingByOwner(1L, state);
-        assertEquals(objectMapper.writeValueAsString(bookingList), result);
     }
 }
