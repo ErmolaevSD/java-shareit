@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.isNull;
 import static ru.practicum.shareit.booking.model.BookingStatus.REJECTED;
 import static ru.practicum.shareit.booking.model.BookingStatus.WAITING;
 

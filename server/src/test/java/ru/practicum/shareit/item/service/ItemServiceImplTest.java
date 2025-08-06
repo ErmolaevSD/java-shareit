@@ -344,7 +344,7 @@ class ItemServiceImplTest {
         when(itemMapper.toItemDto(item))
                 .thenReturn(itemDto);
 
-        assertThrows(NotValidException.class, () -> itemService.updateItem(1,1,itemDto));
+        assertThrows(NotValidException.class, () -> itemService.updateItem(1, 1, itemDto));
     }
 
 }
