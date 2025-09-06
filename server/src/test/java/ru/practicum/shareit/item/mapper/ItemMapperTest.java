@@ -1,0 +1,287 @@
+package ru.practicum.shareit.item.mapper;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.item.dto.CommentCreatedDto;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemCreatedDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.RequestRepository;
+import ru.practicum.shareit.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class ItemMapperTest {
+
+
+    private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+    @Mock
+    private RequestRepository requestRepository;
+    @Mock
+    private CommentRepository commentRepository;
+
+    private ItemCreatedDto itemCreatedDto;
+    private ItemDto itemDto;
+    private User user;
+    private Booking lastBooking;
+    private Booking nextBooking;
+    private Item item;
+    private ItemRequest itemRequest;
+    private List<Item> itemList = new ArrayList<>();
+    private CommentDto commentDto;
+    private CommentCreatedDto commentCreatedDto;
+    private Comment comment;
+
+    @BeforeEach
+    void setUp() {
+        itemList.add(item);
+
+        commentDto = CommentDto.builder()
+                .id(1)
+                .text("text")
+                .authorName("name")
+                .created(LocalDateTime.now())
+                .build();
+
+        commentCreatedDto = CommentCreatedDto.builder()
+                .text("text")
+                .build();
+
+        itemRequest = ItemRequest.builder()
+                .id(1)
+                .description("itemRequestDescription")
+                .requestor(user)
+                .items(itemList)
+                .created(LocalDateTime.now())
+                .build();
+
+        item = Item.builder()
+                .id(1)
+                .name("itemName")
+                .description("itemDescription")
+                .available(true)
+                .request(itemRequest)
+                .owner(user)
+                .lastBooking(lastBooking)
+                .nextBooking(nextBooking)
+                .comments(new ArrayList<>())
+                .build();
+
+        lastBooking = Booking.builder()
+                .id(1)
+                .start(LocalDateTime.now().minusDays(3))
+                .end(LocalDateTime.now().minusDays(2))
+                .item(item)
+                .booker(user)
+                .status(BookingStatus.WAITING)
+                .build();
+
+        user = User.builder()
+                .id(1)
+                .name("userName")
+                .email("user@bk.ru")
+                .build();
+
+        itemCreatedDto = ItemCreatedDto.builder()
+                .name("itemName")
+                .description("itemDescription")
+                .available(true)
+                .requestId(1)
+                .build();
+
+        itemDto = ItemDto.builder()
+                .id(1)
+                .name("itemName")
+                .description("itemDescription")
+                .available(true)
+                .requestId(1)
+                .owner(user)
+                .lastBooking(lastBooking)
+                .nextBooking(nextBooking)
+                .comments(new ArrayList<>())
+                .build();
+
+        comment = Comment.builder()
+                .text("name")
+                .created(LocalDateTime.now())
+                .item(item)
+                .author(user)
+                .id(1)
+                .build();
+
+    }
+
+    @Test
+    void testToCreatedDtoItem_whenValid() {
+        Item actualItem = itemMapper.toCreatedDtoItem(itemCreatedDto, requestRepository);
+
+        assertEquals(actualItem.getName(), itemCreatedDto.getName());
+        assertEquals(actualItem.getDescription(), itemCreatedDto.getDescription());
+        assertEquals(actualItem.getAvailable(), itemCreatedDto.getAvailable());
+        assertEquals(actualItem.getNextBooking(), null);
+        assertEquals(actualItem.getOwner(), null);
+        assertEquals(actualItem.getComments(), null);
+    }
+
+    @Test
+    void testToItemDto_whenValid() {
+        ItemDto actualItemDto = itemMapper.toItemDto(item);
+
+        assertEquals(actualItemDto.getId(), item.getId());
+        assertEquals(actualItemDto.getName(), item.getName());
+        assertEquals(actualItemDto.getDescription(), item.getDescription());
+        assertEquals(actualItemDto.getAvailable(), item.getAvailable());
+        assertEquals(actualItemDto.getLastBooking(), item.getLastBooking());
+        assertEquals(actualItemDto.getNextBooking(), item.getNextBooking());
+        assertEquals(actualItemDto.getOwner(), item.getOwner());
+        assertEquals(actualItemDto.getComments(), item.getComments());
+    }
+
+    @Test
+    void toDtoItem() {
+        Item actualItemDto = itemMapper.toDtoItem(itemDto);
+
+        assertEquals(actualItemDto.getId(), itemDto.getId());
+        assertEquals(actualItemDto.getName(), itemDto.getName());
+        assertEquals(actualItemDto.getDescription(), itemDto.getDescription());
+        assertEquals(actualItemDto.getAvailable(), itemDto.getAvailable());
+        assertEquals(actualItemDto.getLastBooking(), itemDto.getLastBooking());
+        assertEquals(actualItemDto.getNextBooking(), itemDto.getNextBooking());
+        assertEquals(actualItemDto.getOwner(), itemDto.getOwner());
+        assertEquals(actualItemDto.getComments(), itemDto.getComments());
+    }
+
+    @Test
+    void toCommentCommentDto() {
+        Comment comment = Comment.builder()
+                .id(1)
+                .item(item)
+                .author(user)
+                .text("text")
+                .created(LocalDateTime.now())
+                .build();
+        CommentDto actualCommentDto = itemMapper.toCommentCommentDto(comment);
+
+        assertEquals(actualCommentDto.getId(), comment.getId());
+        assertEquals(actualCommentDto.getAuthorName(), comment.getAuthor().getName());
+        assertEquals(actualCommentDto.getText(), comment.getText());
+        assertEquals(actualCommentDto.getCreated(), comment.getCreated());
+    }
+
+    @Test
+    void mapToRequest() {
+        ItemRequest expectedRequest = new ItemRequest();
+        when(requestRepository.findById(1))
+                .thenReturn(Optional.of(expectedRequest));
+        ItemRequest actualRequest = itemMapper.mapToRequest(1, requestRepository);
+
+        assertEquals(expectedRequest, actualRequest);
+        verify(requestRepository).findById(1);
+    }
+
+    @Test
+    void mapToComment() {
+        assertNull(itemMapper.mapComment(null));
+
+        List<CommentDto> actual = itemMapper.mapComment(List.of(comment));
+        assertEquals(comment.getText(), actual.getFirst().getText());
+    }
+
+    @Test
+    void testMapToRequestAndComment_whenNotValid_thenNull() {
+        assertNull(itemMapper.mapToRequest(null, requestRepository));
+        assertNull(itemMapper.mapComment(null));
+    }
+
+    @Test
+    void testCreate_whenNull_thenReturnedNull() {
+        assertNull(itemMapper.toCreatedDtoItem(null, requestRepository));
+        assertNull(itemMapper.toItemDto(null));
+        assertNull(itemMapper.toDtoItem(null));
+        assertNull(itemMapper.toCommentCommentDto(null));
+    }
+
+    @Test
+    void updateItemFromDto_ShouldUpdateNonNullFields() {
+        ItemDto dto = ItemDto.builder()
+                .comments(List.of(commentDto))
+                .nextBooking(nextBooking)
+                .lastBooking(lastBooking)
+                .owner(user)
+                .requestId(1)
+                .name("New Name")
+                .description("New Description")
+                .available(false)
+                .build();
+
+        Item item = Item.builder()
+                .id(1)
+                .name("Old Name")
+                .description("Old Description")
+                .available(true)
+                .build();
+
+        Item updatedItem = itemMapper.updateItemFromDto(dto, item);
+
+        assertAll(
+                () -> assertEquals(1, updatedItem.getId()),
+                () -> assertEquals("New Name", updatedItem.getName()),
+                () -> assertEquals("New Description", updatedItem.getDescription()),
+                () -> assertFalse(updatedItem.getAvailable())
+        );
+
+        assertEquals(lastBooking, updatedItem.getLastBooking());
+    }
+
+    @Test
+    void updateItemFromDto_ShouldIgnoreNullFields() {
+        ItemDto dto = ItemDto.builder()
+                .name(null)
+                .available(false)
+                .build();
+
+        Item item = Item.builder()
+                .id(1)
+                .name("Old Name")
+                .available(true)
+                .build();
+
+        Item updatedItem = itemMapper.updateItemFromDto(dto, item);
+
+        assertAll(
+                () -> assertEquals("Old Name", updatedItem.getName()),
+                () -> assertFalse(updatedItem.getAvailable())
+        );
+    }
+
+    @Test
+    void updateItemFromDto_ShouldMapRequestIdToItemRequest() {
+        ItemDto dto = ItemDto.builder()
+                .requestId(100)
+                .build();
+
+        Item item = new Item();
+        Item updatedItem = itemMapper.updateItemFromDto(dto, item);
+
+        assertNotNull(updatedItem.getRequest());
+        assertEquals(100, updatedItem.getRequest().getId());
+    }
+}
